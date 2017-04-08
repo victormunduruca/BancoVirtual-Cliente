@@ -9,27 +9,20 @@ import java.util.Scanner;
 
 public class Cliente {
 	public static void main(String[] args) throws UnknownHostException, IOException {
-		Socket cliente = new Socket("127.0.0.1", 12349);
+		Socket cliente = new Socket("127.0.0.1", 12345);
 		System.out.println("O cliente se conectou ao servidor!");
 		
 		DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream());
 		DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
 		
 		String pacote = menu();
+		System.out.println(pacote);
 		outputDados.writeUTF(pacote);	
 		if(inputDados.readInt() == 2) {
 			System.out.println("Cadastro Concluido");
 		}
-//		if(inputDados.readInt() == 1) {
-//			//realiza cadastro
-////			outputDados.writeUTF("Victor");
-////			outputDados.writeBoolean(true);
-////			outputDados.writeUTF("1234");
-//			
-//			
-//		
-//		}
-//		menu();
+		outputDados.close();
+		inputDados.close();
 	}
 	
 	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro) {
@@ -53,24 +46,29 @@ public class Cliente {
 					String nome = (String) scanner.next(); // Tratar pra nomes completos
 					boolean eJuridica = false;
 					
-					System.out.println("A conta será de pessoa física (1) ou jurídica (2)?, digite a alternativa correspondente");
 					
-					int escolha = scanner.nextInt();
-					if(escolha == 2) 
-						eJuridica = true;
+					while(true) {
+						System.out.println("A conta será de pessoa física (1) ou jurídica (2)?, digite a alternativa correspondente");
+						int escolha = scanner.nextInt();
+						if(escolha == 1) {
+							break;
+						} else if(escolha == 2) {
+							eJuridica = true;
+							break;
+						} 
+					}
 					
 					System.out.println("Digite seu número de CPF ou CNPJ, por favor");
-					
-					String numeroRegistro = (String) scanner.next();
-										
+					String numeroRegistro = (String) scanner.next();		
 					pacote = formataCadastroConta(1, nome, eJuridica, numeroRegistro);
-					System.out.println(pacote);
-					break;
+					return pacote;
+					//break;
 				default:
 					System.out.println("Digite uma opção válida");
 					break;
 				}
 			}
+			
 	}
 	
 }
