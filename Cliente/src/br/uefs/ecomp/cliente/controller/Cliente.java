@@ -9,24 +9,24 @@ import java.util.Scanner;
 
 public class Cliente {
 	public static void main(String[] args) throws UnknownHostException, IOException {
-		Socket cliente = new Socket("127.0.0.1", 12345);
+		Socket cliente = new Socket("127.0.0.1", 12346); // conecta com o servidor
 		System.out.println("O cliente se conectou ao servidor!");
 		
-		DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream());
+		DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); //streams de dados
 		DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
 		
-		String pacote = menu();
+		String pacote = menu(); //recebe pacote com base em menu
 		System.out.println(pacote);
-		outputDados.writeUTF(pacote);	
-		if(inputDados.readInt() == 2) {
+		outputDados.writeUTF(pacote);	//envia o pacote ao servidor
+		if(inputDados.readInt() == 2) { //confirma se a operação foi feita corretamente
 			System.out.println("Cadastro Concluido");
 		}
-		outputDados.close();
+		outputDados.close(); //fecha output streams
 		inputDados.close();
 	}
 	
-	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro) {
-		return acao.toString()+"-"+nome+";"+eJuridica.toString()+";"+numeroRegistro; 
+	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String usuario, String senha) { //formata o pacote para o cadastro de contas
+		return acao.toString()+"-"+nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+usuario+";"+senha; 
 	}
 	
 	public static String menu() {
@@ -37,13 +37,12 @@ public class Cliente {
 				System.out.println("1 - Cadastrar Conta");
 				System.out.println("Vai sair e?");
 				
-				
 				switch (scanner.nextInt()) {
 				case 1:
 					
 					System.out.println("Digite o seu nome");
 					
-					String nome = (String) scanner.next(); // Tratar pra nomes completos
+					String nome = (String) scanner.next();// Tratar pra nomes completos
 					boolean eJuridica = false;
 					
 					
@@ -59,8 +58,21 @@ public class Cliente {
 					}
 					
 					System.out.println("Digite seu número de CPF ou CNPJ, por favor");
-					String numeroRegistro = (String) scanner.next();		
-					pacote = formataCadastroConta(1, nome, eJuridica, numeroRegistro);
+					String numeroRegistro = (String) scanner.next();
+					
+					System.out.println("Digite o seu CEP");
+					String cep = (String) scanner.next();
+					System.out.println("Digite a sua rua"); //tratar para ruas
+					String rua = (String) scanner.next();
+					System.out.println("Digite o numero da casa");
+					String numero = (String) scanner.next();
+					
+					System.out.println("Está quase acabando, agora, escolha um usuário pra sua conta");
+					String usuario = (String) scanner.next(); 
+					System.out.println("Por último, digite uma senha para sua nova conta no Banco Virtual");
+					String senha = (String) scanner.next();
+					
+					pacote = formataCadastroConta(1, nome, eJuridica, numeroRegistro, cep, rua, numero, usuario, senha);
 					return pacote;
 					//break;
 				default:
