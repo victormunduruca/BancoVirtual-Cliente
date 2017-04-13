@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+import br.uefs.ecomp.cliente.model.Acao;
+
 public class Cliente {
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		Socket cliente = new Socket("127.0.0.1", 12346); // conecta com o servidor
@@ -18,7 +20,7 @@ public class Cliente {
 		String pacote = menu(); //recebe pacote com base em menu
 		System.out.println(pacote);
 		outputDados.writeUTF(pacote);	//envia o pacote ao servidor
-		if(inputDados.readInt() == 2) { //confirma se a operação foi feita corretamente
+		if(inputDados.readInt() == 1) { //confirma se a operação foi feita corretamente
 			System.out.println("Cadastro Concluido");
 		}
 		outputDados.close(); //fecha output streams
@@ -39,7 +41,7 @@ public class Cliente {
 				
 				switch (scanner.nextInt()) {
 				case 1:
-					
+				
 					System.out.println("Digite o seu nome");
 					
 					String nome = (String) scanner.next();// Tratar pra nomes completos
@@ -72,7 +74,17 @@ public class Cliente {
 					System.out.println("Por último, digite uma senha para sua nova conta no Banco Virtual");
 					String senha = (String) scanner.next();
 					
-					pacote = formataCadastroConta(1, nome, eJuridica, numeroRegistro, cep, rua, numero, usuario, senha);
+					while(true) {
+						System.out.println("Digite (1) para conta corrente e (2) para jurídica");
+						int escolha = scanner.nextInt();
+						if(escolha == 1) {
+							pacote = formataCadastroConta(Acao.CADASTRAR_CONTA_CORRENTE, nome, eJuridica, numeroRegistro, cep, rua, numero, usuario, senha);
+							break;
+						} else if(escolha == 2) {
+							pacote = formataCadastroConta(Acao.CADASTRAR_CONTA_POUPANCA, nome, eJuridica, numeroRegistro, cep, rua, numero, usuario, senha);
+							break;
+						}
+					}
 					return pacote;
 					//break;
 				default:
