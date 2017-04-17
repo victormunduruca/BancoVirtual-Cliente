@@ -12,6 +12,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Scanner;
 
+import br.uefs.ecomp.cliente.exceptions.PessoaExistenteException;
 import br.uefs.ecomp.cliente.model.Acao;
 
 public class Cliente {
@@ -25,8 +26,11 @@ public class Cliente {
 		String pacote = menu(); //recebe pacote com base em menu
 		System.out.println(pacote);
 		outputDados.writeUTF(pacote);	//envia o pacote ao servidor
-		if(inputDados.readInt() == 1) { //confirma se a operação foi feita corretamente
+		int resposta = inputDados.readInt();
+		if(resposta == 1) { //confirma se a operação foi feita corretamente
 			System.out.println("Cadastro Concluido");
+		} else if(resposta == 10) {
+			System.out.println("Cadastro não realizado: Pessoa já existe");
 		}
 		outputDados.close(); //fecha output streams
 		inputDados.close();
