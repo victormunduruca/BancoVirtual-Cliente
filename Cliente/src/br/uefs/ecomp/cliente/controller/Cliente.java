@@ -1,4 +1,3 @@
-
 package br.uefs.ecomp.cliente.controller;
 
 import java.io.BufferedReader;
@@ -21,29 +20,23 @@ public class Cliente {
 		Socket cliente = new Socket("127.0.0.1", 12346); // conecta com o servidor
 		System.out.println("O cliente se conectou ao servidor!");
 		
-		DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); //streams de dados
-		DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
 		
-		String pacote = menu(); //recebe pacote com base em menu
-		System.out.println(pacote);
-		outputDados.writeUTF(pacote);	//envia o pacote ao servidor
-		int resposta = inputDados.readInt();
-		if(resposta == 1) { //confirma se a operação foi feita corretamente
-			System.out.println("Cadastro Concluido");
-		} else if(resposta == 10) {
-			System.out.println("Cadastro não realizado: Pessoa já existe");
-		}
-		outputDados.close(); //fecha output streams
-		inputDados.close();
+		
+		menu(cliente); //recebe pacote com base em menu
+		
+		
+		
 	}
 	
 	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String usuario, String senha) { //formata o pacote para o cadastro de contas
 		return acao.toString()+"-"+nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+usuario+";"+senha; 
 	}
 	
-	public static String menu() throws IOException, NoSuchAlgorithmException {
+	public static String menu(Socket cliente) throws IOException, NoSuchAlgorithmException {
 		Scanner scanner = new Scanner(System.in);
 		String pacote;
+		DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); //streams de dados
+		DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
 			while(true) {
 				System.out.println("Escolha a opção desejada");
 				System.out.println("1 - Cadastrar Conta");
@@ -96,11 +89,38 @@ public class Cliente {
 							break;
 						}
 					}
-					return pacote;
-					//break;
-				default:
+					System.out.println(pacote);
+					outputDados.writeUTF(pacote);	//envia o pacote ao servidor
+					int resposta = inputDados.readInt();
+					if(resposta == 1) { //confirma se a operação foi feita corretamente
+						System.out.println("Cadastro Concluido");
+					} else if(resposta == 10) {
+						System.out.println("Cadastro não realizado: Pessoa já existe");
+					}
+					
 					outputDados.close(); //fecha output streams
 					inputDados.close();
+					break;
+				case 2:
+					System.out.println("Digite seu CPF ou CNPJ");
+					String registroLogin = (String) scanner.next();
+					System.out.println("Digite sua senha");
+					String senhaLogin = (String) scanner.next();
+					senhaLogin = md5(senhaLogin);
+					String pacoteLogin = Acao.LOGIN+"-"+registroLogin+";"+senhaLogin;
+					outputDados.writeUTF(pacoteLogin);
+					int respostaLogin = inputDados.readInt();
+					if(respostaLogin == 3)
+						System.out.println("Login efetuado");
+					else if(respostaLogin == 30)
+						System.out.println("Usuario Inexistente");
+					else if(respostaLogin == 31)
+						System.out.println("Falha na autenticação");
+					
+					outputDados.close(); //fecha output streams
+					inputDados.close();
+					break;
+				default:
 					System.out.println("Digite uma opção válida");
 					break;
 				}
