@@ -24,30 +24,27 @@ public class Cliente {
 		DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); //streams de dados
 		DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
 		
-		menu(cliente); //recebe pacote com base em menu
-//		System.out.println(pacote);
-//		outputDados.writeUTF(pacote);	//envia o pacote ao servidor
-//		int resposta = inputDados.readInt();
-//		if(resposta == 1) { //confirma se a operação foi feita corretamente
-//			System.out.println("Cadastro Concluido");
-//		} else if(resposta == 10) {
-//			System.out.println("Cadastro não realizado: Pessoa já existe");
-//		}
-//		outputDados.close(); //fecha output streams
-//		inputDados.close();
+		String pacote = menu(); //recebe pacote com base em menu
+		System.out.println(pacote);
+		outputDados.writeUTF(pacote);	//envia o pacote ao servidor
+		int resposta = inputDados.readInt();
+		if(resposta == 1) { //confirma se a operação foi feita corretamente
+			System.out.println("Cadastro Concluido");
+		} else if(resposta == 10) {
+			System.out.println("Cadastro não realizado: Pessoa já existe");
+		}
+		outputDados.close(); //fecha output streams
+		inputDados.close();
 	}
 	
 	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String usuario, String senha) { //formata o pacote para o cadastro de contas
 		return acao.toString()+"-"+nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+usuario+";"+senha; 
 	}
 	
-	public static void menu(Socket cliente) throws IOException, NoSuchAlgorithmException {
+	public static String menu() throws IOException, NoSuchAlgorithmException {
 		Scanner scanner = new Scanner(System.in);
 		String pacote;
-		
 			while(true) {
-				DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); //streams de dados
-				DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
 				System.out.println("Escolha a opção desejada");
 				System.out.println("1 - Cadastrar Conta");
 				System.out.println("Vai sair e?");
@@ -99,17 +96,8 @@ public class Cliente {
 							break;
 						}
 					}
-					
-					
-					System.out.println(pacote);
-					outputDados.writeUTF(pacote);	//envia o pacote ao servidor
-					int resposta = inputDados.readInt();
-					if(resposta == 1) { //confirma se a operação foi feita corretamente
-						System.out.println("Cadastro Concluido");
-					} else if(resposta == 10) {
-						System.out.println("Cadastro não realizado: Pessoa já existe");
-					}
-					break;
+					return pacote;
+					//break;
 				default:
 					outputDados.close(); //fecha output streams
 					inputDados.close();
@@ -119,7 +107,6 @@ public class Cliente {
 			}
 			
 	}
-
 	public static String md5(String senha) throws NoSuchAlgorithmException {
 		 MessageDigest m=MessageDigest.getInstance("MD5");
 	       m.update(senha.getBytes(),0,senha.length());
