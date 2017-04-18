@@ -40,6 +40,7 @@ public class Cliente {
 			while(true) {
 				System.out.println("Escolha a opção desejada");
 				System.out.println("1 - Cadastrar Conta");
+				System.out.println("2 - Fazer login");
 				System.out.println("Vai sair e?");
 				
 				switch (scanner.nextInt()) {
@@ -102,12 +103,14 @@ public class Cliente {
 					inputDados.close();
 					break;
 				case 2:
+					System.out.println("Digite o numero da conta que deseja acessar:");
+					String numeroConta = (String) scanner.next();
 					System.out.println("Digite seu CPF ou CNPJ");
 					String registroLogin = (String) scanner.next();
 					System.out.println("Digite sua senha");
 					String senhaLogin = (String) scanner.next();
 					senhaLogin = md5(senhaLogin);
-					String pacoteLogin = Acao.LOGIN+"-"+registroLogin+";"+senhaLogin;
+					String pacoteLogin = Acao.LOGIN+"-"+registroLogin+";"+senhaLogin+";"+numeroConta;
 					outputDados.writeUTF(pacoteLogin);
 					int respostaLogin = inputDados.readInt();
 					if(respostaLogin == 3)
