@@ -18,21 +18,14 @@ import br.uefs.ecomp.cliente.model.Acao;
 public class Cliente {
 	public static void main(String[] args) throws UnknownHostException, IOException, NoSuchAlgorithmException {
 		 // conecta com o servidor
-		
-		
-		
-		
-		menu(); //recebe pacote com base em menu
-		
-		
-		
+		executa(); //recebe pacote com base em menu
 	}
 	
-	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String usuario, String senha) { //formata o pacote para o cadastro de contas
-		return acao.toString()+"-"+nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+usuario+";"+senha; 
+	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String senha) { //formata o pacote para o cadastro de contas
+		return acao.toString()+"-"+nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+senha; 
 	}
 	
-	public static void menu() throws IOException, NoSuchAlgorithmException {
+	public static void executa() throws IOException, NoSuchAlgorithmException {
 		
 		Scanner scanner = new Scanner(System.in);
 		String pacote;
@@ -49,13 +42,10 @@ public class Cliente {
 				
 				switch (scanner.nextInt()) {
 				case 1:
-				
 					System.out.println("Digite o seu nome");
 					BufferedReader leitor = new BufferedReader(new InputStreamReader(System.in));
 					String nome = leitor.readLine();// Tratar exception
 					boolean eJuridica = false;
-					
-					
 					while(true) {
 						System.out.println("A conta será de pessoa física (1) ou jurídica (2)?, digite a alternativa correspondente");
 						int escolha = scanner.nextInt();
@@ -66,31 +56,25 @@ public class Cliente {
 							break;
 						} 
 					}
-					
 					System.out.println("Digite seu número de CPF ou CNPJ, por favor");
 					String numeroRegistro = (String) scanner.next();
-					
 					System.out.println("Digite o seu CEP");
 					String cep = (String) scanner.next();
 					System.out.println("Digite a sua rua"); //tratar para ruas
 					String rua = leitor.readLine();
 					System.out.println("Digite o numero da casa");
 					String numero = (String) scanner.next();
-					
-					System.out.println("Está quase acabando, agora, escolha um usuário pra sua conta");
-					String usuario = (String) scanner.next(); 
-					System.out.println("Por último, digite uma senha para sua nova conta no Banco Virtual (sem espaços)");
+					System.out.println("Está quase acabando, digite uma senha para sua nova conta no Banco Virtual (sem espaços)");
 					String senha = (String) scanner.next();
-					
 					String senhaMd5 = md5(senha);
 					while(true) {
 						System.out.println("Digite (1) para conta corrente e (2) para jurídica");
 						int escolha = scanner.nextInt();
 						if(escolha == 1) {
-							pacote = formataCadastroConta(Acao.CADASTRAR_CONTA_CORRENTE, nome, eJuridica, numeroRegistro, cep, rua, numero, usuario, senhaMd5);
+							pacote = formataCadastroConta(Acao.CADASTRAR_CONTA_CORRENTE, nome, eJuridica, numeroRegistro, cep, rua, numero, senhaMd5);
 							break;
 						} else if(escolha == 2) {
-							pacote = formataCadastroConta(Acao.CADASTRAR_CONTA_POUPANCA, nome, eJuridica, numeroRegistro, cep, rua, numero, usuario, senhaMd5);
+							pacote = formataCadastroConta(Acao.CADASTRAR_CONTA_POUPANCA, nome, eJuridica, numeroRegistro, cep, rua, numero, senhaMd5);
 							break;
 						}
 					}
