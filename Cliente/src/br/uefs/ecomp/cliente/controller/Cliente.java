@@ -17,12 +17,12 @@ import br.uefs.ecomp.cliente.model.Acao;
 
 public class Cliente {
 	public static void main(String[] args) throws UnknownHostException, IOException, NoSuchAlgorithmException {
-		Socket cliente = new Socket("127.0.0.1", 12346); // conecta com o servidor
-		System.out.println("O cliente se conectou ao servidor!");
+		 // conecta com o servidor
 		
 		
 		
-		menu(cliente); //recebe pacote com base em menu
+		
+		menu(); //recebe pacote com base em menu
 		
 		
 		
@@ -32,12 +32,16 @@ public class Cliente {
 		return acao.toString()+"-"+nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+usuario+";"+senha; 
 	}
 	
-	public static String menu(Socket cliente) throws IOException, NoSuchAlgorithmException {
+	public static void menu() throws IOException, NoSuchAlgorithmException {
+		
 		Scanner scanner = new Scanner(System.in);
 		String pacote;
-		DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); //streams de dados
-		DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
+		
 			while(true) {
+				Socket cliente = new Socket("192.168.1.8", 12346);
+				System.out.println("O cliente se conectou ao servidor!");
+				DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); //streams de dados
+				DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
 				System.out.println("Escolha a opção desejada");
 				System.out.println("1 - Cadastrar Conta");
 				System.out.println("2 - Fazer login");
@@ -98,9 +102,9 @@ public class Cliente {
 					} else if(resposta == 10) {
 						System.out.println("Cadastro não realizado: Pessoa já existe");
 					}
-					
-					outputDados.close(); //fecha output streams
-					inputDados.close();
+					outputDados.flush();
+//					outputDados.close(); //fecha output streams
+//					inputDados.close();
 					break;
 				case 2:
 					System.out.println("Digite o numero da conta que deseja acessar:");
@@ -119,14 +123,17 @@ public class Cliente {
 						System.out.println("Usuario Inexistente");
 					else if(respostaLogin == 31)
 						System.out.println("Falha na autenticação");
-					
-					outputDados.close(); //fecha output streams
-					inputDados.close();
+					outputDados.flush();
+//					outputDados.close(); //fecha output streams
+//					inputDados.close();
 					break;
 				default:
 					System.out.println("Digite uma opção válida");
 					break;
 				}
+				outputDados.close(); //fecha output streams
+				inputDados.close();
+				cliente.close();
 			}
 			
 	}
