@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
@@ -24,7 +25,12 @@ public class Cliente {
 	}
  	public static void main(String[] args) throws UnknownHostException, IOException, NoSuchAlgorithmException {
 		 // conecta com o servidor
-		executa(); //recebe pacote com base em menu
+ 		try{
+ 			executa(); //recebe pacote com base em menu
+ 		} catch (ConnectException e) {
+ 			System.out.println("Erro, não conseguiu conectar ao servidor");
+ 		}
+		return;
 	}
 	
 //	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String senha) { //formata o pacote para o cadastro de contas
@@ -43,7 +49,7 @@ public class Cliente {
 				System.out.println("O cliente se conectou ao servidor!");
 				DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); //streams de dados
 				DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
-				System.out.println("Escolha a opção desejada\n1 - Cadastrar Conta\n2 - Fazer login\n3- Fazer transferencia\n4- Fazer deposito\nPressione qualquer tecla pra sair\n");
+				System.out.println("Escolha a opção desejada\n1 - Cadastrar Conta\n2 - Fazer login\n3- Fazer transferencia\n4- Fazer deposito\n5- Cadastrar novo titular\nPressione qualquer outra tecla pra sair\n");
 				int acao = scanner.nextInt();
 				System.out.println("acao: " +acao);
 				switch (acao) {
@@ -149,13 +155,12 @@ public class Cliente {
 						System.out.println("Titular cadastrado com sucesso");
 				default:
 					System.out.println("Digite uma opção válida");
-					break;
+					return;
 				}
 				outputDados.close(); //fecha output streams
 				inputDados.close();
 				cliente.close();
 			}
-			
 	}
 //	private static String subMenuLogin(Scanner scanner) {
 //		System.out.println("Escolha uma das opções:\n1-Fazer transação\n2- Fazer depósito");
