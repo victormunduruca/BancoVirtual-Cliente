@@ -41,7 +41,7 @@ public class Cliente {
 				System.out.println("O cliente se conectou ao servidor!");
 				DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); //streams de dados
 				DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
-				System.out.println("Escolha a opção desejada\n1 - Cadastrar Conta\n2 - Fazer login\nPressione qualquer tecla pra sair");
+				System.out.println("Escolha a opção desejada\n1 - Cadastrar Conta\n2 - Fazer login\n3- Fazer transferencia\n4- Fazer deposito\nPressione qualquer tecla pra sair\n");
 				int acao = scanner.nextInt();
 				System.out.println("acao: " +acao);
 				switch (acao) {
@@ -119,7 +119,7 @@ public class Cliente {
 					}
 					System.out.println("Por favor, digite o número da conta para qual deseja depositar");
 					String numeroConta = (String) scanner.next();
-					System.out.println("Agora, digite o valor a ser depositado (utilize ponto para as virgulas)");
+					System.out.println("Agora, digite o valor a ser depositado (utilize virgulas)");
 					double valorDeposito = scanner.nextDouble();
 					String pacoteDeposito = Acao.DEPOSITO+"-"+numeroConta+";"+String.valueOf(valorDeposito);
 					outputDados.writeUTF(pacoteDeposito);
