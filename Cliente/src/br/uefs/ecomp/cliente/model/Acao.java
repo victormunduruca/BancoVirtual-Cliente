@@ -6,4 +6,5 @@ public interface Acao {
 	int LOGIN = 3;
 	int TRANSACAO = 4;
 	int DEPOSITO = 5;
+	int NOVO_TITULAR = 6;
 }

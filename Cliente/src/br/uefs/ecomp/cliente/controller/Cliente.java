@@ -18,7 +18,7 @@ import br.uefs.ecomp.cliente.model.Acao;
 public class Cliente {
 
 	private static boolean estaLogado;
-	
+	private static String numeroContaLogado;
 	public Cliente() {
 		estaLogado = false;
 	}
@@ -27,10 +27,12 @@ public class Cliente {
 		executa(); //recebe pacote com base em menu
 	}
 	
-	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String senha) { //formata o pacote para o cadastro de contas
-		return acao.toString()+"-"+nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+senha; 
+//	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String senha) { //formata o pacote para o cadastro de contas
+//		return acao.toString()+"-"+nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+senha; 
+//	}
+ 	public static String formataPessoa(String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String senha) { //formata o pacote para o cadastro de contas
+		return nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+senha; 
 	}
-	
 	public static void executa() throws IOException, NoSuchAlgorithmException {
 		
 		Scanner scanner = new Scanner(System.in);
@@ -46,7 +48,7 @@ public class Cliente {
 				System.out.println("acao: " +acao);
 				switch (acao) {
 				case 1:
-					String pacote = cadastro(scanner);
+					String pacote = Acao.CADASTRAR_CONTA_CORRENTE+"-"+cadastro(scanner);
 					outputDados.writeUTF(pacote);	//envia o pacote ao servidor
 					int resposta = inputDados.readInt();
 					if(resposta == 1) { //confirma se a operação foi feita corretamente
@@ -130,6 +132,21 @@ public class Cliente {
 						System.out.println("Conta inexistente, tente novamente!");
 					}
 					break;
+				case 5:
+					if(!estaLogado) {
+						System.out.println("Por favor, realize o login primeiro");
+						break;
+					}
+					if(numeroContaLogado == null)
+						System.out.println("Um erro ocorreu, faça login e tente novamente");
+					String pacoteTitular = Acao.NOVO_TITULAR+"-"+cadastro(scanner)+";"+numeroContaLogado;
+					System.out.println("Pacote adicionar titular: " +pacoteTitular);
+					outputDados.writeUTF(pacoteTitular);
+					int respostaTitular = inputDados.readInt();
+					if(respostaTitular == 32) 
+						System.out.println("Conta inexistente");
+					else if(respostaTitular == 6) 
+						System.out.println("Titular cadastrado com sucesso");
 				default:
 					System.out.println("Digite uma opção válida");
 					break;
@@ -188,13 +205,13 @@ public class Cliente {
 			System.out.println("Digite (1) para conta corrente e (2) para jurídica");
 			int escolha = scanner.nextInt();
 			if(escolha == 1) {
-				pacote = formataCadastroConta(Acao.CADASTRAR_CONTA_CORRENTE, nome, eJuridica, numeroRegistro, cep, rua, numero, senhaMd5);
 				break;
 			} else if(escolha == 2) {
-				pacote = formataCadastroConta(Acao.CADASTRAR_CONTA_POUPANCA, nome, eJuridica, numeroRegistro, cep, rua, numero, senhaMd5);
+				
 				break;
 			}
 		}
+		pacote = formataPessoa(nome, eJuridica, numeroRegistro, cep, rua, numero, senhaMd5);
 		System.out.println(pacote);
 	
 		return pacote;
@@ -202,13 +219,13 @@ public class Cliente {
 	
 	public static String login(Scanner scanner) throws NoSuchAlgorithmException {
 		System.out.println("Digite o numero da conta que deseja acessar:");
-		String numeroConta = (String) scanner.next();
+		numeroContaLogado = (String) scanner.next();
 		System.out.println("Digite seu CPF ou CNPJ");
 		String registroLogin = (String) scanner.next();
 		System.out.println("Digite sua senha");
 		String senhaLogin = (String) scanner.next();
 		senhaLogin = md5(senhaLogin);
-		String pacoteLogin = Acao.LOGIN+"-"+registroLogin+";"+senhaLogin+";"+numeroConta;
+		String pacoteLogin = Acao.LOGIN+"-"+registroLogin+";"+senhaLogin+";"+numeroContaLogado;
 	
 		return pacoteLogin;
 	}
