@@ -24,21 +24,18 @@ public class Cliente {
 		estaLogado = false;
 	}
  	public static void main(String[] args) throws UnknownHostException, IOException, NoSuchAlgorithmException {
-		 // conecta com o servidor
  		try{
- 			executa(); //recebe pacote com base em menu
+ 			executa(); 
  		} catch (ConnectException e) {
  			System.out.println("Erro, não conseguiu conectar ao servidor");
  		}
 		return;
 	}
-	
-//	public static String formataCadastroConta(Integer acao, String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String senha) { //formata o pacote para o cadastro de contas
-//		return acao.toString()+"-"+nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+senha; 
-//	}
+ 	
  	public static String formataPessoa(String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String senha) { //formata o pacote para o cadastro de contas
 		return nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+senha; 
 	}
+ 	
 	public static void executa() throws IOException, NoSuchAlgorithmException {
 		
 		Scanner scanner = new Scanner(System.in);
@@ -49,7 +46,7 @@ public class Cliente {
 				System.out.println("O cliente se conectou ao servidor!");
 				DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); //streams de dados
 				DataInputStream inputDados = new DataInputStream(cliente.getInputStream());
-				System.out.println("Escolha a opção desejada\n1 - Cadastrar Conta\n2 - Fazer login\n3- Fazer transferencia\n4- Fazer deposito\n5- Cadastrar novo titular\nPressione qualquer outra tecla pra sair\n");
+				System.out.println("Escolha a opção desejada\n1 - Cadastrar Conta\n2 - Fazer login\n3- Fazer transferencia\n4- Fazer deposito\n5- Cadastrar novo titular\n6-Encerrar sessão\n");
 				int acao = scanner.nextInt();
 				System.out.println("acao: " +acao);
 				switch (acao) {
@@ -63,8 +60,6 @@ public class Cliente {
 						System.out.println("Cadastro não realizado: Pessoa já existe");
 					}
 					outputDados.flush();
-//					outputDados.close(); //fecha output streams
-//					inputDados.close();
 					break;
 				case 2:
 					String pacoteLogin = login(scanner);
@@ -73,34 +68,12 @@ public class Cliente {
 					if(respostaLogin == 3){
 						System.out.println("Login efetuado");
 						estaLogado = true;
-//						String pacoteAcaoLogin = subMenuLogin(scanner);
-//						outputDados.writeUTF(pacoteAcaoLogin);
-//						int respostaAcaoLogin = inputDados.readInt();
-//						switch (respostaAcaoLogin) {
-//						case 50:
-//							System.out.println("Deposito bem sucedido");
-//						case 40:
-//							System.out.println("Transacao bem sucedida!");
-//							break;
-//						case 41: 
-//							System.out.println("Transação mal sucedida: Saldo insuficiente");
-//							break;
-//						case 42:
-//							System.out.println("Um erro aconteceu, tente novamente");
-//							break;
-//						case 32:
-//							System.out.println("Conta inexistente!");
-//						default:
-//							break;
-//						}
 					}
 					else if(respostaLogin == 30)
 						System.out.println("Usuario Inexistente");
 					else if(respostaLogin == 31)
 						System.out.println("Falha na autenticação");
 					outputDados.flush();  
-//					outputDados.close(); //fecha output streams
-//					inputDados.close();
 					break;
 				case 3:
 					if(!estaLogado) {
@@ -118,6 +91,12 @@ public class Cliente {
 					String pacoteTransacao = Acao.TRANSACAO+"-"+numeroContaOrigem+";"+numeroContaDestino+";"+stringValor;
 					outputDados.writeUTF(pacoteTransacao);
 					int respostaTransferencia = inputDados.readInt();
+					if(respostaTransferencia == 40) 
+						System.out.println("Transferência bem sucedida!");
+					else if(respostaTransferencia == 41) 
+						System.out.println("Transferência mal sucedida, Saldo Insuficiente!");
+					else if(respostaTransferencia == 42)
+						System.out.println("Um erro aconteceu, tente novamente");
 					System.out.println("resposta: " +respostaTransferencia);
 					break;
 				case 4:
@@ -153,31 +132,20 @@ public class Cliente {
 						System.out.println("Conta inexistente");
 					else if(respostaTitular == 6) 
 						System.out.println("Titular cadastrado com sucesso");
+				case 6:
+					System.out.println("Obrigado, tenha um bom dia!");
+					cliente.close();
+					return;
 				default:
 					System.out.println("Digite uma opção válida");
-					return;
+					
 				}
 				outputDados.close(); //fecha output streams
 				inputDados.close();
 				cliente.close();
 			}
 	}
-//	private static String subMenuLogin(Scanner scanner) {
-//		System.out.println("Escolha uma das opções:\n1-Fazer transação\n2- Fazer depósito");
-//		int acao = scanner.nextInt();
-//		switch (acao) {
-//		case 1:
-//			
-//			return pacoteTransacao;
-//		case 2:
-//			
-//			return pacoteDeposito;
-//		default:
-//			break;
-//		}
-//		return null;
-//	}
-
+	
 	public static String cadastro(Scanner scanner) throws IOException, NoSuchAlgorithmException {
 		String pacote;
 		
@@ -234,6 +202,7 @@ public class Cliente {
 	
 		return pacoteLogin;
 	}
+	
 	public static String md5(String senha) throws NoSuchAlgorithmException {
 		 MessageDigest m=MessageDigest.getInstance("MD5");
 	       m.update(senha.getBytes(),0,senha.length());
