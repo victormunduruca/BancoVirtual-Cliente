@@ -16,7 +16,13 @@ import br.uefs.ecomp.cliente.exceptions.PessoaExistenteException;
 import br.uefs.ecomp.cliente.model.Acao;
 
 public class Cliente {
-	public static void main(String[] args) throws UnknownHostException, IOException, NoSuchAlgorithmException {
+
+	private static boolean estaLogado;
+	
+	public Cliente() {
+		estaLogado = false;
+	}
+ 	public static void main(String[] args) throws UnknownHostException, IOException, NoSuchAlgorithmException {
 		 // conecta com o servidor
 		executa(); //recebe pacote com base em menu
 	}
@@ -58,26 +64,27 @@ public class Cliente {
 					int respostaLogin = inputDados.readInt();
 					if(respostaLogin == 3){
 						System.out.println("Login efetuado");
-						String pacoteAcaoLogin = subMenuLogin(scanner);
-						outputDados.writeUTF(pacoteAcaoLogin);
-						int respostaAcaoLogin = inputDados.readInt();
-						switch (respostaAcaoLogin) {
-						case 50:
-							System.out.println("Deposito bem sucedido");
-						case 40:
-							System.out.println("Transacao bem sucedida!");
-							break;
-						case 41: 
-							System.out.println("Transação mal sucedida: Saldo insuficiente");
-							break;
-						case 42:
-							System.out.println("Um erro aconteceu, tente novamente");
-							break;
-						case 32:
-							System.out.println("Conta inexistente!");
-						default:
-							break;
-						}
+						estaLogado = true;
+//						String pacoteAcaoLogin = subMenuLogin(scanner);
+//						outputDados.writeUTF(pacoteAcaoLogin);
+//						int respostaAcaoLogin = inputDados.readInt();
+//						switch (respostaAcaoLogin) {
+//						case 50:
+//							System.out.println("Deposito bem sucedido");
+//						case 40:
+//							System.out.println("Transacao bem sucedida!");
+//							break;
+//						case 41: 
+//							System.out.println("Transação mal sucedida: Saldo insuficiente");
+//							break;
+//						case 42:
+//							System.out.println("Um erro aconteceu, tente novamente");
+//							break;
+//						case 32:
+//							System.out.println("Conta inexistente!");
+//						default:
+//							break;
+//						}
 					}
 					else if(respostaLogin == 30)
 						System.out.println("Usuario Inexistente");
@@ -86,6 +93,42 @@ public class Cliente {
 					outputDados.flush();  
 //					outputDados.close(); //fecha output streams
 //					inputDados.close();
+					break;
+				case 3:
+					if(!estaLogado) {
+						System.out.println("Por favor, realize o login primeiro");
+						break;
+					}
+					System.out.println("Por favor, digite o número da conta de origem");
+					String  numeroContaOrigem = (String) scanner.next();
+					System.out.println("Agora, digite a conta de destino");
+					String numeroContaDestino = (String) scanner.next();
+					System.out.println("Agora, finalmente, digete o valor a ser transferido");
+					double valor = scanner.nextDouble();
+					String stringValor = String.valueOf(valor);
+					System.out.println("o double convertido ficou:" +stringValor);
+					String pacoteTransacao = Acao.TRANSACAO+"-"+numeroContaOrigem+";"+numeroContaDestino+";"+stringValor;
+					outputDados.writeUTF(pacoteTransacao);
+					int respostaTransferencia = inputDados.readInt();
+					System.out.println("resposta: " +respostaTransferencia);
+					break;
+				case 4:
+					if(!estaLogado) {
+						System.out.println("Por favor, realize o login primeiro");
+						break;
+					}
+					System.out.println("Por favor, digite o número da conta para qual deseja depositar");
+					String numeroConta = (String) scanner.next();
+					System.out.println("Agora, digite o valor a ser depositado (utilize ponto para as virgulas)");
+					double valorDeposito = scanner.nextDouble();
+					String pacoteDeposito = Acao.DEPOSITO+"-"+numeroConta+";"+String.valueOf(valorDeposito);
+					outputDados.writeUTF(pacoteDeposito);
+					int respostaDeposito = inputDados.readInt();
+					if(respostaDeposito == 50) {
+						System.out.println("Deposito bem sucedido");
+					} else if(respostaDeposito == 32) {
+						System.out.println("Conta inexistente, tente novamente!");
+					}
 					break;
 				default:
 					System.out.println("Digite uma opção válida");
@@ -97,32 +140,21 @@ public class Cliente {
 			}
 			
 	}
-	private static String subMenuLogin(Scanner scanner) {
-		System.out.println("Escolha uma das opções:\n1-Fazer transação\n2- Fazer depósito");
-		int acao = scanner.nextInt();
-		switch (acao) {
-		case 1:
-			System.out.println("Por favor, digite o número da conta de origem");
-			String  numeroContaOrigem = (String) scanner.next();
-			System.out.println("Agora, digite a conta de destino");
-			String numeroContaDestino = (String) scanner.next();
-			System.out.println("Agora, finalmente, digete o valor a ser transferido");
-			double valor = scanner.nextDouble();
-			String stringValor = String.valueOf(valor);
-			System.out.println("o double convertido ficou:" +stringValor);
-			String pacoteTransacao = Acao.TRANSACAO+"-"+numeroContaOrigem+";"+numeroContaDestino+";"+stringValor;
-			return pacoteTransacao;
-		case 2:
-			System.out.println("Por favor, digite o número da conta para qual deseja depositar");
-			String numeroConta = (String) scanner.next();
-			System.out.println("Agora, digite o valor a ser depositado (utilize ponto para as virgulas)");
-			double valorDeposito = scanner.nextDouble();
-			String pacoteDeposito = Acao.DEPOSITO+"-"+numeroConta+";"+String.valueOf(valorDeposito);
-		default:
-			break;
-		}
-		return null;
-	}
+//	private static String subMenuLogin(Scanner scanner) {
+//		System.out.println("Escolha uma das opções:\n1-Fazer transação\n2- Fazer depósito");
+//		int acao = scanner.nextInt();
+//		switch (acao) {
+//		case 1:
+//			
+//			return pacoteTransacao;
+//		case 2:
+//			
+//			return pacoteDeposito;
+//		default:
+//			break;
+//		}
+//		return null;
+//	}
 
 	public static String cadastro(Scanner scanner) throws IOException, NoSuchAlgorithmException {
 		String pacote;
