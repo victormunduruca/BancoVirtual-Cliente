@@ -51,10 +51,10 @@ public class Cliente {
 			while(true) { // Laço de repetição utilizado para caso o usuário deseje realizar mais de uma operação
 //				Socket cliente = new Socket("172.16.103.104", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
 				Socket cliente = new Socket("192.168.56.1", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
-				System.out.println("O cliente conectado ao sevidor"); // Mensagem de conexão é passada ao usuário
+				System.out.println("Cliente conectado ao sevidor"); // Mensagem de conexão é passada ao usuário
 				DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); // Saida de dados, com base no socket do servidor
 				DataInputStream inputDados = new DataInputStream(cliente.getInputStream()); // Entrada de dados com base no socket do servidor
-				System.out.println("Escolha a opção desejada\n1 - Cadastrar Conta\n2 - Fazer login\n3- Fazer transferencia\n4- Fazer deposito\n5- Cadastrar novo titular\n6-Encerrar sessão"); //Menu com as escolhas mostradas ao usuário
+				System.out.println("Escolha a opção desejada\n1 - Cadastrar Conta\n2 - Fazer login\n3- Fazer transferencia\n4- Fazer deposito\n5- Cadastrar novo titular\n6- Encerrar sessão"); //Menu com as escolhas mostradas ao usuário
 				int acao = scanner.nextInt(); // A ação desejada é obtida do usuário
 				System.out.println("acao: " +acao);
 				switch (acao) { // Com base na ação, são realizadas operações diferentes, de acordo com o menu
@@ -64,11 +64,11 @@ public class Cliente {
 					outputDados.writeUTF(pacote);	//Envia o pacote ao servidor
 					int resposta = inputDados.readInt(); // Recebe resposta do servidor
 					if(resposta == 1) { //Confirma se a operação foi feita corretamente
-						System.out.println("Cadastro Concluido");
+						System.out.println("\nCadastro Concluido");
 						int numeroConta = inputDados.readInt();
-						System.out.println("Número da conta: " +numeroConta);
+						System.out.println("\nNúmero da conta: " +numeroConta+ "\n");
 					} else if(resposta == 11) {
-						System.out.println("Cadastro não realizado: Pessoa já existe");
+						System.out.println("\nCadastro não realizado: Pessoa já existe\n");
 					}
 					outputDados.flush(); 
 					break;
@@ -76,23 +76,26 @@ public class Cliente {
 					String pacoteLogin = login(scanner); //Recebe pacote de dados respectivos ao login, pelo método de login 
 					outputDados.writeUTF(pacoteLogin); // Envia o pacote ao servidor
 					int respostaLogin = inputDados.readInt(); //Recebe resposta do servidor
+					System.out.println("Resposta login: "+respostaLogin);
 					if(respostaLogin == 3){ // Verifica resposta do servidor
-						System.out.println("Login efetuado"); //retorna ao usuário 
+						System.out.println("\nLogin efetuado\n"); //retorna ao usuário 
 						estaLogado = true; // Atualiza variável indicando que o usuário está logado
 					}
 					else if(respostaLogin == 30) 
-						System.out.println("Usuario Inexistente");
+						System.out.println("\nUsuario Inexistente\n");
 					else if(respostaLogin == 31)
-						System.out.println("Falha na autenticação");
+						System.out.println("\nFalha na autenticação\n");
+					else if(respostaLogin == 32)
+						System.out.println("\nConta inexistente!\n");
 					outputDados.flush();  
 					break;
 				case 3:
 					if(!estaLogado) { // Se o usuário não está logado, não é possível entrar nessa seção
-						System.out.println("Por favor, realize o login primeiro");
+						System.out.println("\nPor favor, realize o login primeiro\n");
 						break;
 					}
 					if(numeroContaLogado == null) { //Verifica se algum erro aconteceu, evitando referencia a nulos
-						System.out.println("Um erro ocorreu, faça login e tente novamente");
+						System.out.println("\nUm erro ocorreu, faça login e tente novamente\n");
 						break;
 					}
 					//Informações necessárias são requisitadas ao usuário
@@ -105,7 +108,6 @@ public class Cliente {
 					//atributos com ponto e vírgula
 					outputDados.writeUTF(pacoteTransacao); //Envia pacote ao servidor
 					int respostaTransferencia = inputDados.readInt(); // Lê a resposta do servidor
-					System.out.println("Resposta transferencia: "+respostaTransferencia);
 					if(respostaTransferencia == 40) //Verifica resposta do servidor, com base em números conhecidos do protocolo criado
 						System.out.println("Transferência bem sucedida!");
 					else if(respostaTransferencia == 41) 
@@ -116,11 +118,11 @@ public class Cliente {
 					break;
 				case 4:
 					if(!estaLogado) { // Se o usuário não está logado, não é possível entrar nessa seção
-						System.out.println("Por favor, realize o login primeiro");
+						System.out.println("\nPor favor, realize o login primeiro\n");
 						break;
 					}
 					if(numeroContaLogado == null) { //Verifica se algum erro aconteceu, evitando referencia a nulos
-						System.out.println("Um erro ocorreu, faça login e tente novamente");
+						System.out.println("\nUm erro ocorreu, faça login e tente novamente\n");
 						break;
 					}
 					System.out.println("Agora, digite o valor a ser depositado (utilize virgulas somente)"); 
@@ -129,38 +131,38 @@ public class Cliente {
 					outputDados.writeUTF(pacoteDeposito); // Envia o pacote ao servidor
 					int respostaDeposito = inputDados.readInt(); // Lê sua resposta
 					if(respostaDeposito == 50) { //Verifica e retorna ao usuário, com base em número conhecidos do protocolo criado, os resultados da operação
-						System.out.println("Deposito bem sucedido");
+						System.out.println("\nDeposito bem sucedido\n");
 					} else if(respostaDeposito == 32) {
-						System.out.println("Conta inexistente, tente novamente!");
+						System.out.println("\nConta inexistente, tente novamente!\n");
 					}
 					outputDados.flush();
 					break;
 				case 5:
 					if(!estaLogado) { // Se o usuário não está logado, não é possível entrar nessa seção
-						System.out.println("Por favor, realize o login primeiro");
+						System.out.println("\nPor favor, realize o login primeiro\n");
 						break;
 					}
 					if(numeroContaLogado == null) { //Verifica se algum erro aconteceu, evitando referencia a nulos
-						System.out.println("Um erro ocorreu, faça login e tente novamente");
+						System.out.println("\nUm erro ocorreu, faça login e tente novamente\n");
 						break;
 					}	
 					String pacoteTitular = Acao.NOVO_TITULAR+"-"+cadastroPessoa(scanner)+";"+numeroContaLogado; //Cria pacote para adicionar novos titulares
 					outputDados.writeUTF(pacoteTitular); //Envia pacote a servidor
 					int respostaTitular = inputDados.readInt(); // Lê resposta servidor
 					if(respostaTitular == 6) 
-						System.out.println("Titular cadastrado com sucesso");
+						System.out.println("\nTitular cadastrado com sucesso\n");
 					else if(respostaTitular == 32) //Verifica e retorna ao usuário, com base em número conhecidos do protocolo criado, os resultados da operação
-						System.out.println("Conta inexistente");
+						System.out.println("\nConta inexistente\n");
 					else if(respostaTitular == 61) 
-						System.out.println("Titular não cadastrado, titular já existe!");
+						System.out.println("\nTitular não cadastrado, titular já existe!\n");
 					outputDados.flush();
 					break;
 				case 6:
-					System.out.println("Obrigado, tenha um bom dia!"); //Finaliza sessão 
+					System.out.println("\nObrigado, tenha um bom dia!"); //Finaliza sessão 
 					cliente.close();
 					return;
 				default:
-					System.out.println("Digite uma opção válida");
+					System.out.println("\nDigite uma opção válida\n");
 					
 				}
 				outputDados.close(); //fecha output streams
