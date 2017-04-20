@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import br.uefs.ecomp.cliente.exceptions.PessoaExistenteException;
+
 import br.uefs.ecomp.cliente.model.Acao;
 /**
  * 
@@ -58,13 +58,13 @@ public class Cliente {
 				System.out.println("acao: " +acao);
 				switch (acao) { // Com base na ação, são realizadas operações diferentes, de acordo com o menu
 				case 1:
-					String pacote = Acao.CADASTRAR_CONTA_CORRENTE+"-"+cadastro(scanner); // A interface Acao, determina a ação requisitada com base em um int, além disso, o método cadastro é chamado
+					String pacote = cadastroConta(scanner); // A interface Acao, determina a ação requisitada com base em um int, além disso, o método cadastro é chamado
 					//nesse método, os dados do cadastro são obtididos e contatenados numa string com base na entrada feita pelo usuário
 					outputDados.writeUTF(pacote);	//Envia o pacote ao servidor
 					int resposta = inputDados.readInt(); // Recebe resposta do servidor
 					if(resposta == 1) { //Confirma se a operação foi feita corretamente
 						System.out.println("Cadastro Concluido");
-					} else if(resposta == 10) {
+					} else if(resposta == 11) {
 						System.out.println("Cadastro não realizado: Pessoa já existe");
 					}
 					outputDados.flush(); 
@@ -138,13 +138,15 @@ public class Cliente {
 						System.out.println("Um erro ocorreu, faça login e tente novamente");
 						break;
 					}	
-					String pacoteTitular = Acao.NOVO_TITULAR+"-"+cadastro(scanner)+";"+numeroContaLogado; //Cria pacote para adicionar novos titulares
+					String pacoteTitular = Acao.NOVO_TITULAR+"-"+cadastroPessoa(scanner)+";"+numeroContaLogado; //Cria pacote para adicionar novos titulares
 					outputDados.writeUTF(pacoteTitular); //Envia pacote a servidor
 					int respostaTitular = inputDados.readInt(); // Lê resposta servidor
 					if(respostaTitular == 32) //Verifica e retorna ao usuário, com base em número conhecidos do protocolo criado, os resultados da operação
 						System.out.println("Conta inexistente");
 					else if(respostaTitular == 6) 
 						System.out.println("Titular cadastrado com sucesso");
+					else if(respostaTitular == 61) 
+						System.out.println("Titular não cadastrado, titular já existe!");
 				case 6:
 					System.out.println("Obrigado, tenha um bom dia!"); //Finaliza sessão 
 					cliente.close();
@@ -179,8 +181,23 @@ public class Cliente {
  	 * @throws IOException
  	 * @throws NoSuchAlgorithmException
  	 */
-	public static String cadastro(Scanner scanner) throws IOException, NoSuchAlgorithmException {
-		String pacote;
+	public static String cadastroConta(Scanner scanner) throws IOException, NoSuchAlgorithmException {
+		String pacote = cadastroPessoa(scanner);
+		while(true) { 
+			System.out.println("Digite (1) para conta corrente e (2) para poupança"); // Escolha entre conta corrente e 
+			int escolha = scanner.nextInt();
+			if(escolha == 1) {
+				pacote = String.valueOf(escolha)+"-"+pacote; //Chama o método de formataPessoa, para retornar o pacote, corretamente
+				break;
+			} else if(escolha == 2) {
+				pacote = String.valueOf(escolha)+"-"+pacote; //Chama o método de formataPessoa, para retornar o pacote, corretamente
+				break;
+			}
+		}
+		System.out.println(pacote);
+		return pacote; //Retorna o pacote com informações de cadastro
+	}
+	public static String cadastroPessoa(Scanner scanner) throws IOException, NoSuchAlgorithmException {
 		System.out.println("Digite o seu nome");
 		BufferedReader leitor = new BufferedReader(new InputStreamReader(System.in)); // Lê o nome por meio de um bufferedReader, por conta da possibilidade de nomes compostos
 		String nome = leitor.readLine(); 
@@ -207,18 +224,7 @@ public class Cliente {
 		System.out.println("Está quase acabando, digite uma senha para sua nova conta no Banco Virtual (sem espaços)");
 		String senha = (String) scanner.next();
 		String senhaMd5 = md5(senha); // A senha é hasheada em md5 para maior segurança do usuário
-//		while(true) { 
-//			System.out.println("Digite (1) para conta corrente e (2) para jurídica"); // Escolha entre conta corrente e 
-//			int escolha = scanner.nextInt();
-//			if(escolha == 1) {
-//				break;
-//			} else if(escolha == 2) {
-//				break;
-//			}
-//		}
-		pacote = formataPessoa(nome, eJuridica, numeroRegistro, cep, rua, numero, senhaMd5); //Chama o método de formataPessoa, para retornar o pacote, corretamente
-		System.out.println(pacote);
-		return pacote; //Retorna o pacote com informações de cadastro
+		return formataPessoa(nome, eJuridica, numeroRegistro, cep, rua, numero, senhaMd5);
 	}
 	/**
 	 * Método que recebe informações requeridas ao fazer login
