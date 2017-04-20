@@ -110,6 +110,7 @@ public class Cliente {
 						System.out.println("Transferência mal sucedida, Saldo Insuficiente!");
 					else if(respostaTransferencia == 42)
 						System.out.println("Um erro aconteceu, tente novamente");
+					outputDados.flush();
 					break;
 				case 4:
 					if(!estaLogado) { // Se o usuário não está logado, não é possível entrar nessa seção
@@ -130,6 +131,7 @@ public class Cliente {
 					} else if(respostaDeposito == 32) {
 						System.out.println("Conta inexistente, tente novamente!");
 					}
+					outputDados.flush();
 					break;
 				case 5:
 					if(!estaLogado) { // Se o usuário não está logado, não é possível entrar nessa seção
@@ -149,6 +151,7 @@ public class Cliente {
 						System.out.println("Conta inexistente");
 					else if(respostaTitular == 61) 
 						System.out.println("Titular não cadastrado, titular já existe!");
+					outputDados.flush();
 					break;
 				case 6:
 					System.out.println("Obrigado, tenha um bom dia!"); //Finaliza sessão 
@@ -200,6 +203,13 @@ public class Cliente {
 		System.out.println(pacote);
 		return pacote; //Retorna o pacote com informações de cadastro
 	}
+	/**
+	 * Método que realiza a formatação do cadastro de uma pessoa
+	 * @param scanner
+	 * @return String das informações da pessoa no formato de pacote
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 */
 	public String cadastroPessoa(Scanner scanner) throws IOException, NoSuchAlgorithmException {
 		System.out.println("Digite o seu nome");
 		BufferedReader leitor = new BufferedReader(new InputStreamReader(System.in)); // Lê o nome por meio de um bufferedReader, por conta da possibilidade de nomes compostos
