@@ -97,19 +97,20 @@ public class Cliente {
 					//Informações necessárias são requisitadas ao usuário
 					System.out.println("Agora, digite a conta de destino");
 					String numeroContaDestino = (String) scanner.next();
-					System.out.println("Agora, finalmente, digite o valor a ser transferido");
+					System.out.println("Agora, finalmente, digite o valor a ser transferido (utilize vírgulas somente)");
 					double valor = scanner.nextDouble();
 					String stringValor = String.valueOf(valor); // O valor em double é 
 					String pacoteTransacao = Acao.TRANSACAO+"-"+numeroContaLogado+";"+numeroContaDestino+";"+stringValor; //Pacote de transação é preparado, separando a ação com traço e 
 					//atributos com ponto e vírgula
 					outputDados.writeUTF(pacoteTransacao); //Envia pacote ao servidor
 					int respostaTransferencia = inputDados.readInt(); // Lê a resposta do servidor
+					System.out.println("Resposta transferencia: "+respostaTransferencia);
 					if(respostaTransferencia == 40) //Verifica resposta do servidor, com base em números conhecidos do protocolo criado
 						System.out.println("Transferência bem sucedida!");
 					else if(respostaTransferencia == 41) 
 						System.out.println("Transferência mal sucedida, Saldo Insuficiente!");
-					else if(respostaTransferencia == 42)
-						System.out.println("Um erro aconteceu, tente novamente");
+					else if(respostaTransferencia == 32)
+						System.out.println("Conta inexistente, tente novamente");
 					outputDados.flush();
 					break;
 				case 4:
@@ -121,7 +122,7 @@ public class Cliente {
 						System.out.println("Um erro ocorreu, faça login e tente novamente");
 						break;
 					}
-					System.out.println("Agora, digite o valor a ser depositado (utilize virgulas)"); 
+					System.out.println("Agora, digite o valor a ser depositado (utilize virgulas somente)"); 
 					double valorDeposito = scanner.nextDouble();
 					String pacoteDeposito = Acao.DEPOSITO+"-"+numeroContaLogado+";"+String.valueOf(valorDeposito); //Prepara o pacote de deposito, que irá ser enviado ao servidor
 					outputDados.writeUTF(pacoteDeposito); // Envia o pacote ao servidor
