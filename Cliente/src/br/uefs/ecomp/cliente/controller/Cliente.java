@@ -31,7 +31,7 @@ public class Cliente {
 	}
  	public static void main(String[] args) throws UnknownHostException, IOException, NoSuchAlgorithmException {
  		try{
- 			executa(); //método que inicializa as ações do cliente
+ 			new Cliente().executa(); //método que inicializa as ações do cliente
  		} catch (ConnectException e) {
  			System.out.println("Erro, não conseguiu conectar ao servidor");
  		} 
@@ -43,7 +43,7 @@ public class Cliente {
  	 * @throws IOException
  	 * @throws NoSuchAlgorithmException
  	 */
-	public static void executa() throws IOException, NoSuchAlgorithmException {
+	public void executa() throws IOException, NoSuchAlgorithmException {
 		
 		Scanner scanner = new Scanner(System.in);
 		
@@ -64,6 +64,8 @@ public class Cliente {
 					int resposta = inputDados.readInt(); // Recebe resposta do servidor
 					if(resposta == 1) { //Confirma se a operação foi feita corretamente
 						System.out.println("Cadastro Concluido");
+						int numeroConta = inputDados.readInt();
+						System.out.println("Número da conta: " +numeroConta);
 					} else if(resposta == 11) {
 						System.out.println("Cadastro não realizado: Pessoa já existe");
 					}
@@ -141,12 +143,13 @@ public class Cliente {
 					String pacoteTitular = Acao.NOVO_TITULAR+"-"+cadastroPessoa(scanner)+";"+numeroContaLogado; //Cria pacote para adicionar novos titulares
 					outputDados.writeUTF(pacoteTitular); //Envia pacote a servidor
 					int respostaTitular = inputDados.readInt(); // Lê resposta servidor
-					if(respostaTitular == 32) //Verifica e retorna ao usuário, com base em número conhecidos do protocolo criado, os resultados da operação
-						System.out.println("Conta inexistente");
-					else if(respostaTitular == 6) 
+					if(respostaTitular == 6) 
 						System.out.println("Titular cadastrado com sucesso");
+					else if(respostaTitular == 32) //Verifica e retorna ao usuário, com base em número conhecidos do protocolo criado, os resultados da operação
+						System.out.println("Conta inexistente");
 					else if(respostaTitular == 61) 
 						System.out.println("Titular não cadastrado, titular já existe!");
+					break;
 				case 6:
 					System.out.println("Obrigado, tenha um bom dia!"); //Finaliza sessão 
 					cliente.close();
@@ -171,7 +174,7 @@ public class Cliente {
  	 * @param Senha do usuário
  	 * @return String correspondente aos dados da pessoa, em formato de pacote, segundo o protocolo criado
  	 */
- 	public static String formataPessoa(String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String senha) { //formata o pacote para o cadastro de contas
+ 	public String formataPessoa(String nome, Boolean eJuridica, String numeroRegistro, String cep, String rua, String numero, String senha) { //formata o pacote para o cadastro de contas
 		return nome+";"+eJuridica.toString()+";"+numeroRegistro+";"+cep+";"+rua+";"+numero+";"+senha; 
 	}
  	/**
@@ -181,7 +184,7 @@ public class Cliente {
  	 * @throws IOException
  	 * @throws NoSuchAlgorithmException
  	 */
-	public static String cadastroConta(Scanner scanner) throws IOException, NoSuchAlgorithmException {
+	public String cadastroConta(Scanner scanner) throws IOException, NoSuchAlgorithmException {
 		String pacote = cadastroPessoa(scanner);
 		while(true) { 
 			System.out.println("Digite (1) para conta corrente e (2) para poupança"); // Escolha entre conta corrente e 
@@ -197,7 +200,7 @@ public class Cliente {
 		System.out.println(pacote);
 		return pacote; //Retorna o pacote com informações de cadastro
 	}
-	public static String cadastroPessoa(Scanner scanner) throws IOException, NoSuchAlgorithmException {
+	public String cadastroPessoa(Scanner scanner) throws IOException, NoSuchAlgorithmException {
 		System.out.println("Digite o seu nome");
 		BufferedReader leitor = new BufferedReader(new InputStreamReader(System.in)); // Lê o nome por meio de um bufferedReader, por conta da possibilidade de nomes compostos
 		String nome = leitor.readLine(); 
@@ -232,7 +235,7 @@ public class Cliente {
 	 * @return String com informações de login, no formato de pacote do protocolo
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static String login(Scanner scanner) throws NoSuchAlgorithmException {
+	public String login(Scanner scanner) throws NoSuchAlgorithmException {
 		//Recebe infomrações referentes a login, do usuário
 		System.out.println("Digite o numero da conta que deseja acessar:");
 		numeroContaLogado = (String) scanner.next();
@@ -250,7 +253,7 @@ public class Cliente {
 	 * @return
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static String md5(String senha) throws NoSuchAlgorithmException {
+	public String md5(String senha) throws NoSuchAlgorithmException {
 		MessageDigest m=MessageDigest.getInstance("MD5");
 		m.update(senha.getBytes(),0,senha.length());
 		return new BigInteger(1,m.digest()).toString(16);
