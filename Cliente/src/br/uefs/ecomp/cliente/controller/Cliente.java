@@ -49,8 +49,8 @@ public class Cliente {
 		
 		
 			while(true) { // Laço de repetição utilizado para caso o usuário deseje realizar mais de uma operação
-				Socket cliente = new Socket("192.168.1.8", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
-				System.out.println("O cliente se conectou ao servidor!"); // Mensagem de conexão é passada ao usuário
+				Socket cliente = new Socket("172.16.103.104", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
+				System.out.println("O cliente conectado ao sevidor"); // Mensagem de conexão é passada ao usuário
 				DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); // Saida de dados, com base no socket do servidor
 				DataInputStream inputDados = new DataInputStream(cliente.getInputStream()); // Entrada de dados com base no socket do servidor
 				System.out.println("Escolha a opção desejada\n1 - Cadastrar Conta\n2 - Fazer login\n3- Fazer transferencia\n4- Fazer deposito\n5- Cadastrar novo titular\n6-Encerrar sessão"); //Menu com as escolhas mostradas ao usuário
@@ -201,7 +201,6 @@ public class Cliente {
 				break;
 			}
 		}
-		System.out.println(pacote);
 		return pacote; //Retorna o pacote com informações de cadastro
 	}
 	/**
