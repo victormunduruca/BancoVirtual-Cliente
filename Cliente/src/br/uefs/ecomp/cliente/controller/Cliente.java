@@ -49,13 +49,12 @@ public class Cliente {
 		
 			while(true) { // Laço de repetição utilizado para caso o usuário deseje realizar mais de uma operação
 //				Socket cliente = new Socket("172.16.103.104", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
-				Socket cliente = new Socket("192.168.56.1", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
+				Socket cliente = new Socket("127.0.0.1", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
 				System.out.println("Cliente conectado ao sevidor"); // Mensagem de conexão é passada ao usuário
 				DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); // Saida de dados, com base no socket do servidor
 				DataInputStream inputDados = new DataInputStream(cliente.getInputStream()); // Entrada de dados com base no socket do servidor
 				System.out.println("Escolha a opção desejada\n1 - Cadastrar Conta\n2 - Fazer login\n3- Fazer transferencia\n4- Fazer deposito\n5- Cadastrar novo titular\n6- Encerrar sessão"); //Menu com as escolhas mostradas ao usuário
 				int acao = scanner.nextInt(); // A ação desejada é obtida do usuário
-				System.out.println("acao: " +acao);
 				switch (acao) { // Com base na ação, são realizadas operações diferentes, de acordo com o menu
 				case 1:
 					String pacote = cadastroConta(scanner); // A interface Acao, determina a ação requisitada com base em um int, além disso, o método cadastro é chamado
