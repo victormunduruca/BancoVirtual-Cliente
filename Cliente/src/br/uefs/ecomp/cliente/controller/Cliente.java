@@ -48,8 +48,8 @@ public class Cliente {
 		
 		
 			while(true) { // Laço de repetição utilizado para caso o usuário deseje realizar mais de uma operação
-//				Socket cliente = new Socket("172.16.103.104", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
-				Socket cliente = new Socket("127.0.0.1", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
+				Socket cliente = new Socket("172.16.103.104", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
+//				Socket cliente = new Socket("127.0.0.1", 12346); // Socket é conectado ao servidor, por um ip e porta especificados
 				System.out.println("Cliente conectado ao sevidor"); // Mensagem de conexão é passada ao usuário
 				DataOutputStream outputDados = new DataOutputStream(cliente.getOutputStream()); // Saida de dados, com base no socket do servidor
 				DataInputStream inputDados = new DataInputStream(cliente.getInputStream()); // Entrada de dados com base no socket do servidor
